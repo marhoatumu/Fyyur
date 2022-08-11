@@ -13,6 +13,8 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
+import collections
+collections.Callable = collections.abc.Callable
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -25,10 +27,16 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # TODO: connect to a local postgresql database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost:5432/fyyurApp'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost:5432/fyyurapp'
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
+
+shows = db.Table('shows',
+	db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True),
+	db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
+	db.Column('start_time', db.DateTime)
+)
 
 class Venue(db.Model):
     __tablename__ = 'Venue'
@@ -39,8 +47,13 @@ class Venue(db.Model):
     state = db.Column(db.String(120))
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
+    genre = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    website_link = db.Column(db.String(120))
+    seeking_talent = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String)
+    artists = db.relationship('Artist', secondary=shows, backref=db.backref('shows', lazy=True))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
@@ -55,6 +68,9 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    website_link = db.Column(db.String(120))
+    seeking_venue = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String)
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
