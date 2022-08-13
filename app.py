@@ -33,7 +33,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres@localhost:5432/fy
 # Models.
 #----------------------------------------------------------------------------#
 
-
 class Venue(db.Model):
     __tablename__ = 'venue'
 
