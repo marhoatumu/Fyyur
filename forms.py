@@ -1,7 +1,33 @@
 from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, AnyOf, URL, Regexp, ValidationError
+import enum
+
+class Genre(enum.Enum):
+  alternative = "Alternative"
+  blues = "Blues"
+  classical = "Classical"
+  country = "Country"
+  electronic = "Electronic"
+  folk = "Folk"
+  funk = "Funk"
+  hip_hop = "Hip-hop"
+  heavy_metal = "Heavy metal"
+  instrumental = "Instrumental"
+  jazz = "Jazz"
+  musical_theatre = "Musical theatre"
+  pop = "Pop"
+  punk = "Punk"
+  rnb = "R&b"
+  reggae = "Reggae"
+  rnr = "Rock n roll"
+  soul = "Soul"
+  other = "Other"
+
+  @classmethod
+  def choices(cls):
+          return [(choice.name, choice.value) for choice in cls]
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -193,7 +219,9 @@ class ArtistForm(Form):
     )
     phone = StringField(
         # TODO implement validation logic for state
-        'phone'
+        'phone', validators=[DataRequired(),
+           Regexp("^[0-9]*$", message="Phone number should only contain digits")
+        ]
     )
     image_link = StringField(
         'image_link'
